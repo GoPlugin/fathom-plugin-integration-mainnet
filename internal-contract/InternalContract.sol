@@ -19,7 +19,7 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
   using SafeMathPlugin for uint256;
   using SignedSafeMath for int256;
   uint256 public _aggRequestId;
-  uint256 constant private ORACLE_PAYMENT = 0.0001 * 10**18;
+  uint256 private ORACLE_PAYMENT = 0.1 * 10**18;
 
   struct Answer {
     uint128 minimumResponses;
@@ -33,21 +33,21 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
     uint256 totalcredits;
   }
 
-  struct pricedb{
-    uint256 reqid;
-    uint256 answer;
-    uint256 updatedOn;
-  }
+  // struct pricedb{
+  //   uint256 reqid;
+  //   uint256 answer;
+  //   uint256 updatedOn;
+  // }
 
-  mapping(uint256 => pricedb) public prices;
+  // mapping(uint256 => pricedb) public prices;
   mapping(address => PLIDatabase) public plidbs;
 
   event ResponseReceived(int256 indexed response, uint256 indexed answerId, address indexed sender);
+  event oracleFeeModified(address indexed owner,uint256 indexed oraclefee,uint256 timestamp);
 
   int256 private currentAnswerValue;
   uint256 private updatedTimestampValue;
   uint256 private latestCompletedAnswer;
-  uint128 public paymentAmount;
   uint128 public minimumResponses;
   string[] public jobIds;
   address[] public oracles;
@@ -110,7 +110,6 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
     external
     returns(uint256 _aggreqid)
   {
-    _aggreqid = _aggRequestId;
     //Check the total Credits available for the user to perform the transaction
     uint256 _a_totalCredits = plidbs[_caller].totalcredits;
     require(_a_totalCredits>ORACLE_PAYMENT,"NO_SUFFICIENT_CREDITS");
@@ -132,7 +131,8 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
     }
     answers[answerCounter].minimumResponses = minimumResponses;
     answers[answerCounter].maxResponses = uint128(oracles.length);
-
+    _aggreqid = answerCounter;
+    _aggRequestId = answerCounter;
     emit NewRound(answerCounter, msg.sender, block.timestamp);
     answerCounter = answerCounter.add(1);
     
@@ -308,14 +308,6 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
     updatedTimestampValue = now;
     updatedTimestamps[_answerId] = now;
     currentAnswers[_answerId] = currentAnswerTemp;
-
-    prices[_aggRequestId] = pricedb(
-      _aggRequestId,
-      uint256(currentAnswerTemp),
-      now
-    );
-    _aggRequestId += 1;
-
     emit AnswerUpdated(currentAnswerTemp, _answerId, now);
   }
 
@@ -342,7 +334,7 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
   }
 
   function showPrice(uint256 _agreqId) public view returns(uint256,uint256){
-    return (prices[_agreqId].answer,prices[_agreqId].updatedOn);
+    return(uint256(currentAnswers[_agreqId]),updatedTimestamps[_agreqId]);
   }
   /**
    * @notice get the last updated at block timestamp
@@ -436,6 +428,14 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
       }
     }
   }
+
+    //set Oracle fee in wei
+  function setOracleFee(uint256 _fee) public onlyOwner {
+      require(_fee > 0,"invalid fee");
+      require(_fee != ORACLE_PAYMENT,"input fee is same as existing fee");
+      ORACLE_PAYMENT = _fee;
+      emit oracleFeeModified(msg.sender,ORACLE_PAYMENT,block.timestamp);
+  } 
 
   /**
    * @dev Swaps the pointers to two uint256 arrays in memory

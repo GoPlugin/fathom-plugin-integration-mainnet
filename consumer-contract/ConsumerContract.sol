@@ -7,7 +7,7 @@ interface IInvokeOracle {
 }
 
 contract ConsumerContract {
-    address CONTRACTADDR = 0x90a3053CA217B5Caf1CD2B47B6Bf45E2391168aD;
+    address CONTRACTADDR = 0x64ae09989a503b748cd2a4D447c7391dfF19A898;
     uint256 public requestId;
     // uint256 private answer;
     // uint256 private updatedOn;
