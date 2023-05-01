@@ -60,6 +60,7 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
   mapping(uint256 => Answer) private answers;
   mapping(uint256 => int256) private currentAnswers;
   mapping(uint256 => uint256) private updatedTimestamps;
+  uint256 private totalOracles;
 
   uint256 constant private MAX_ORACLE_COUNT = 28;
 
@@ -83,6 +84,7 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
   ) public Ownable() {
     setPluginToken(_pli);
     updateRequestDetails(_minimumResponses, _oracles, _jobIds);
+    totalOracles = _oracles.length;
     _aggRequestId = 1;
   }
 
@@ -112,8 +114,9 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
   {
     //Check the total Credits available for the user to perform the transaction
     uint256 _a_totalCredits = plidbs[_caller].totalcredits;
-    require(_a_totalCredits>ORACLE_PAYMENT,"NO_SUFFICIENT_CREDITS");
-    plidbs[_caller].totalcredits = _a_totalCredits - ORACLE_PAYMENT;
+    require(totalOracles > 0,"INVALID ORACLES LENGTH");
+    require(_a_totalCredits >= (ORACLE_PAYMENT * totalOracles),"NO_SUFFICIENT_CREDITS");
+    plidbs[_caller].totalcredits = _a_totalCredits - (ORACLE_PAYMENT * totalOracles) ;
 
     Plugin.Request memory request;
     bytes32 requestId;
