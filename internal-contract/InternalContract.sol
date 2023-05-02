@@ -141,30 +141,6 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
     
   }
 
-  function testMyFunc()
-    public
-  {
-
-    Plugin.Request memory request;
-    bytes32 requestId;
-    uint256 oraclePayment = ORACLE_PAYMENT;
-
-    for (uint i = 0; i < oracles.length; i++) {
-      request = buildPluginRequest(stringToBytes32(jobIds[i]), this, this.pluginCallback.selector);
-      request.add("_fsyms","XDC");
-      request.add("_tsyms","USDT");
-      request.addInt("times", 10000);
-      requestId = sendPluginRequestTo(oracles[i], request, oraclePayment);
-      requestAnswers[requestId] = answerCounter;
-    }
-    answers[answerCounter].minimumResponses = minimumResponses;
-    answers[answerCounter].maxResponses = uint128(oracles.length);
-
-    emit NewRound(answerCounter, msg.sender, block.timestamp);
-
-    answerCounter = answerCounter.add(1);
-  }
-
   /**
    * @notice Receives the answer from the Plugin node.
    * @dev This function can only be called by the oracle that received the request.
