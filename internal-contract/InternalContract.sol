@@ -7,7 +7,6 @@ import "@goplugin/contracts/src/v0.4/interfaces/AggregatorInterface.sol";
 import "@goplugin/contracts/src/v0.4/vendor/SignedSafeMath.sol";
 import "@goplugin/contracts/src/v0.4/vendor/Ownable.sol";
 import "@goplugin/contracts/src/v0.4/vendor/SafeMathPlugin.sol";
-//import "@goplugin/contracts/src/v0.4/vendor/Ownable.sol";
 
 /**
  * @title An example Plugin contract with aggregation
@@ -33,13 +32,6 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
     uint256 totalcredits;
   }
 
-  // struct pricedb{
-  //   uint256 reqid;
-  //   uint256 answer;
-  //   uint256 updatedOn;
-  // }
-
-  // mapping(uint256 => pricedb) public prices;
   mapping(address => PLIDatabase) public plidbs;
 
   event ResponseReceived(int256 indexed response, uint256 indexed answerId, address indexed sender);
@@ -110,9 +102,9 @@ contract Aggregator is AggregatorInterface, PluginClient, Ownable {
    */
   function requestData(address _caller)
     external
+    ensureAuthorizedRequester()
     returns(uint256 _aggreqid)
   {
-    require(msg.sender == _caller,"unauthorized request");
     //Check the total Credits available for the user to perform the transaction
     uint256 _a_totalCredits = plidbs[_caller].totalcredits;
     require(totalOracles > 0,"INVALID ORACLES LENGTH");
