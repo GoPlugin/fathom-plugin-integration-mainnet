@@ -7,7 +7,7 @@ interface IInvokeOracle {
 }
 
 contract ConsumerContract {
-    address CONTRACTADDR = pass_internal_contract_address_here;
+    address CONTRACTADDR = 0xBc6c86e0B0735552520d27b4b3dECa3cE3be99Af;
     uint256 public requestId;
     address private owner;
 

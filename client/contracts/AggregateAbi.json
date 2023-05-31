@@ -99,7 +99,11 @@
         "constant": false,
         "inputs": [
           {
-            "name": "_requester",
+            "name": "_customerContractAddress",
+            "type": "address"
+          },
+          {
+            "name": "_walletAddress",
             "type": "address"
           },
           {
@@ -253,6 +257,131 @@
         "inputs": [
           {
             "indexed": true,
+            "name": "depositer",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "depositedValue",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "name": "PLIDeposited",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "customerContractAddress",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "walletAddress",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "isAllowed",
+            "type": "bool"
+          },
+          {
+            "indexed": false,
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "name": "EnabledAuthorizer",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "name": "TransferredPLI",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "name": "DestroyedContract",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "minimumResponses",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "jobIds",
+            "type": "string[]"
+          },
+          {
+            "indexed": false,
+            "name": "oracles",
+            "type": "address[]"
+          },
+          {
+            "indexed": false,
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "name": "UpdatedRequestDetails",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
             "name": "previousOwner",
             "type": "address"
           }
@@ -380,6 +509,29 @@
           }
         ],
         "name": "authorizedRequesters",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address"
+          },
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "authorizedWallets",
         "outputs": [
           {
             "name": "",
